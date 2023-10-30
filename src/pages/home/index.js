@@ -5,11 +5,12 @@ import {
   FlatList,
   SafeAreaView,
   Dimensions,
-
+  ActivityIndicator,
   RefreshControl
 } from 'react-native';
 import Card from '../../components/Card/index.js';
 import Tabs from '../../components/Tabs/index.js';
+import LoadingArea from '../../components/LoadingArea/index.js';
 import { useEffect, useState, useRef } from 'react';
 import { FlashList } from '@shopify/flash-list';
 
@@ -21,6 +22,7 @@ export default function Home() {
   const [tabActive, setTabActive] = useState('all');
   const [quantity, setQuantity] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef();
   const API_URL = process.env.EXPO_PUBLIC_API_URL
   const API_KEY = process.env.EXPO_PUBLIC_API_KEY
@@ -29,6 +31,7 @@ export default function Home() {
 
   const getGames = async () => {
     try {
+      setIsLoading(true);
       const res = await fetch(
         `${API_URL}`,
         {
@@ -46,6 +49,8 @@ export default function Home() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,23 +112,38 @@ export default function Home() {
   return (
     <View style={styles.container}  >
       <SafeAreaView />
-      <Tabs tabActive={tabActive} handlelickTabs={handlelickTabs} />
-      <View style={{ height: '100%', width: Dimensions.get("screen").width, paddingTop: 32, paddingHorizontal: 24 }}>
-        <FlashList
-          ListHeaderComponent={
-            <Text style={styles.quantidade}>Mostrando {quantity} disponíveis</Text>
-          }
-          ref={listRef}
-          initialNumToRender={10}
-          keyExtractor={(item) => item.id}
-          data={filteredGames && filteredGames.length > 0 ? filteredGames : games}
-          estimatedItemSize={200}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          renderItem={({ item }) => <Card game={item} />}
-        />
-      </View>
+
+      {
+        isLoading ?
+          <LoadingArea />
+          :
+          <>
+            <Tabs tabActive={tabActive} handlelickTabs={handlelickTabs} />
+
+            <View style={{ height: '100%', width: Dimensions.get("screen").width, paddingTop: 32, paddingHorizontal: 24 }}>
+              <FlashList
+                ListHeaderComponent={
+                  <Text style={styles.quantidade}>Mostrando {quantity} disponíveis</Text>
+                }
+                ref={listRef}
+                initialNumToRender={10}
+                keyExtractor={(item) => item.id}
+                data={filteredGames && filteredGames.length > 0 ? filteredGames : games}
+                estimatedItemSize={200}
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                renderItem={({ item }) => <Card game={item} />}
+              />
+            </View>
+          </>
+
+
+      }
+
+
+
+
 
       <StatusBar style="light" />
     </View>
