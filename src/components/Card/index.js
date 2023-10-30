@@ -8,16 +8,28 @@ export default function Card({ game }) {
       <View style={styles.cardInfo}>
         <Text style={styles.title}>{game.title}</Text>
         <View style={styles.platformArea}>
-          <Text>                
-          {game.type} |{" "}
+          <Text>
+            {game.type} |{" "}
           </Text>
-          <Text style={styles.badge}>                
-          {game.platforms.split(",")[0]}
+          <Text style={
+            {
+              ...styles.badge,
+              marginRight: 8,
+            }
+          }>
+            {game.platforms.split(",")[0]}
           </Text>
+          {
+            game.platforms.split(",")[1] &&
+            <Text style={styles.badge}>
+              {game.platforms.split(",")[1]}
+            </Text>
+          }
+
 
         </View>
         <View style={styles.priceArea}>
-          <Text style={styles.freeText}>Free</Text>
+          <Text style={styles.freeText}>Grátis</Text>
           <Text style={styles.price}>{game.worth}</Text>
         </View>
         <Text style={styles.description} numberOfLines={2}>
@@ -91,13 +103,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textTransform: 'uppercase',
   },
-  platformArea:{
+  platformArea: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
     fontSize: 14,
   },
-  badge:{
+  badge: {
     backgroundColor: '#002c3f',
     color: 'rgba(255,255,255,1)',
     fontWeight: 'bold',

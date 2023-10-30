@@ -4,40 +4,64 @@ import {
   View,
   FlatList,
   SafeAreaView,
-  TouchableOpacity,
+  Dimensions,
+
+  RefreshControl
 } from 'react-native';
 import Card from '../../components/Card/index.js';
-import { useEffect, useState } from 'react';
+import Tabs from '../../components/Tabs/index.js';
+import { useEffect, useState, useRef } from 'react';
+import { FlashList } from '@shopify/flash-list';
+
+import { StatusBar } from 'expo-status-bar';
 
 export default function Home() {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
-  const [tabActive, setTabActive] = useState('games');
+  const [tabActive, setTabActive] = useState('all');
   const [quantity, setQuantity] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const listRef = useRef();
+  const API_URL = process.env.EXPO_PUBLIC_API_URL
+  const API_KEY = process.env.EXPO_PUBLIC_API_KEY
+
+
 
   const getGames = async () => {
     try {
       const res = await fetch(
-        `https://gamerpower.p.rapidapi.com/api/giveaways/`,
+        `${API_URL}`,
         {
           method: 'GET',
           headers: {
-            'X-RapidAPI-Key': `59df7faf5emsh2cb45c52d4b33e3p18956fjsn99432fdbfb5d`,
+            'X-RapidAPI-Key': `${API_KEY}`,
             'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com',
           },
         },
       );
       const data = await res.json();
-      console.log(data);
       setGames(data);
-      setQuantity(data.length);
+      if (tabActive === 'all') {
+        setQuantity(data.length);
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handlelickTabs = async (tipo) => {
-    const jogosFiltrados = await games.filter((jogo) => {
+  const onRefresh = () => {
+    setRefreshing(true);
+    getGames();
+    handlelickTabs(tabActive);
+    setRefreshing(false);
+  }
+
+  const scrollToTop = () => {
+    listRef.current.scrollToOffset({ offset: 0, animated: true });
+  }
+
+  const handlelickTabs = (tipo) => {
+    const jogosFiltrados = games.filter((jogo) => {
       const plataformas = [
         'Epic Games Store',
         'Steam',
@@ -61,9 +85,15 @@ export default function Home() {
       ) {
         setTabActive('expansoes');
         return jogo.type === 'DLC';
+      } else if (tipo === 'all') {
+        setTabActive('all');
+        return true;
       }
+
     });
+    scrollToTop();
     setFilteredGames(jogosFiltrados);
+
   };
 
   useEffect(() => {
@@ -75,50 +105,27 @@ export default function Home() {
   }, [filteredGames]);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}  >
       <SafeAreaView />
-      <View style={styles.tabs}>
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => handlelickTabs('games')}
-        >
-          <Text
-            style={{
-              ...styles.tabText,
-              color:
-                tabActive === 'games' ? 'rgba(39, 70, 144,1)' : 'rgba(0,0,0,1)',
-            }}
-          >
-            Games
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            ...styles.tab,
-            borderLeftWidth: 1,
-            borderLeftColor: 'rgba(0,0,0,0.1)',
-          }}
-          onPress={() => handlelickTabs('expansoes')}
-        >
-          <Text
-            style={{
-              ...styles.tabText,
-              color:
-                tabActive === 'expansoes'
-                  ? 'rgba(39, 70, 144,1)'
-                  : 'rgba(0,0,0,1)',
-            }}
-          >
-            DLC
-          </Text>
-        </TouchableOpacity>
+      <Tabs tabActive={tabActive} handlelickTabs={handlelickTabs} />
+      <View style={{ height: '100%', width: Dimensions.get("screen").width, paddingTop: 32, paddingHorizontal: 24 }}>
+        <FlashList
+          ListHeaderComponent={
+            <Text style={styles.quantidade}>Mostrando {quantity} disponíveis</Text>
+          }
+          ref={listRef}
+          initialNumToRender={10}
+          keyExtractor={(item) => item.id}
+          data={filteredGames && filteredGames.length > 0 ? filteredGames : games}
+          estimatedItemSize={200}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          renderItem={({ item }) => <Card game={item} />}
+        />
       </View>
-      <Text style={styles.quantidade}>Mostrar {quantity} disponíveis</Text>
-      <FlatList
-        style={styles.cardsArea}
-        data={filteredGames && filteredGames.length > 0 ? filteredGames : games}
-        renderItem={({ item }) => <Card game={item} />}
-      />
+
+      <StatusBar style="light" />
     </View>
   );
 }
@@ -147,14 +154,14 @@ const styles = StyleSheet.create({
   cardsArea: {
     marginTop: 32,
     width: '100%',
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
+
   },
   quantidade: {
-    paddingTop: 48,
+    paddingBottom: 32,
     color: 'rgba(255,255,255,1)',
     fontSize: 16,
     fontWeight: 'bold',
     alignSelf: 'flex-start',
-    paddingHorizontal: 16,
   },
 });
