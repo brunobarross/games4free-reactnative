@@ -1,7 +1,7 @@
 // app.config.js
 import 'dotenv/config'
 
-const apiKey = process.env.API_KEY;
+
 export default {
   expo: {
     name: "my-app",

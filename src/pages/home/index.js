@@ -16,7 +16,8 @@ import { FlashList } from '@shopify/flash-list';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 
-export default function Home({navigation}) {
+
+export default function Home({ navigation }) {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [tabActive, setTabActive] = useState('all');
@@ -29,15 +30,17 @@ export default function Home({navigation}) {
   const [erro, setErro] = useState('');
 
   const getGames = async () => {
+    console.log(process.env)
     try {
       setIsLoading(true);
       const res = await fetch(`${apiUrl}`, {
         method: 'GET',
         headers: {
-          'X-RapidAPI-Key': `677dbe3f-39be-4cd2-8e03-a15c04a22a94`,
+          'X-RapidAPI-Key': `${apiKey}`,
           'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com',
         },
       });
+
       const data = await res.json();
       setGames(data);
       if (tabActive === 'all') {
@@ -63,7 +66,7 @@ export default function Home({navigation}) {
   };
 
   const handlelickTabs = (tipo) => {
-    if(!games.length) return
+    if (!games.length) return
     const jogosFiltrados = games?.filter((jogo) => {
       const plataformas = [
         'Epic Games Store',
@@ -98,6 +101,7 @@ export default function Home({navigation}) {
   };
 
   useEffect(() => {
+    console.log(Constants?.expoConfig?.extra)
     getGames();
   }, []);
 
