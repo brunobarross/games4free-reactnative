@@ -1,0 +1,25 @@
+{
+  "cli": {
+    "version": ">= 5.6.0"
+  },
+  "build": {
+    
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://gamerpower.p.rapidapi.com/api/giveaways/",
+        "EXPO_PUBLIC_API_KEY": "59df7faf5emsh2cb45c52d4b33e3p18956fjsn99432fdbfb5d"
+
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
