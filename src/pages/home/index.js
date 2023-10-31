@@ -2,11 +2,10 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
   SafeAreaView,
   Dimensions,
-  ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  Alert,
 } from 'react-native';
 import Card from '../../components/Card/index.js';
 import Tabs from '../../components/Tabs/index.js';
@@ -15,8 +14,9 @@ import { useEffect, useState, useRef } from 'react';
 import { FlashList } from '@shopify/flash-list';
 
 import { StatusBar } from 'expo-status-bar';
+import Constants from 'expo-constants';
 
-export default function Home() {
+export default function Home({navigation}) {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [tabActive, setTabActive] = useState('all');
@@ -24,24 +24,20 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef();
-  const API_URL = process.env.EXPO_PUBLIC_API_URL
-  const API_KEY = process.env.EXPO_PUBLIC_API_KEY
-
-
+  const apiUrl = Constants?.expoConfig?.extra.apiUrl;
+  const apiKey = Constants?.expoConfig?.extra.apiKey;
+  const [erro, setErro] = useState('');
 
   const getGames = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch(
-        `${API_URL}`,
-        {
-          method: 'GET',
-          headers: {
-            'X-RapidAPI-Key': `${API_KEY}`,
-            'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com',
-          },
+      const res = await fetch(`${apiUrl}`, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': `677dbe3f-39be-4cd2-8e03-a15c04a22a94`,
+          'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com',
         },
-      );
+      });
       const data = await res.json();
       setGames(data);
       if (tabActive === 'all') {
@@ -49,6 +45,7 @@ export default function Home() {
       }
     } catch (err) {
       console.log(err);
+      setErro('Erro ao carregar os jogos', err);
     } finally {
       setIsLoading(false);
     }
@@ -59,14 +56,15 @@ export default function Home() {
     getGames();
     handlelickTabs(tabActive);
     setRefreshing(false);
-  }
+  };
 
   const scrollToTop = () => {
     listRef.current.scrollToOffset({ offset: 0, animated: true });
-  }
+  };
 
   const handlelickTabs = (tipo) => {
-    const jogosFiltrados = games.filter((jogo) => {
+    if(!games.length) return
+    const jogosFiltrados = games?.filter((jogo) => {
       const plataformas = [
         'Epic Games Store',
         'Steam',
@@ -94,11 +92,9 @@ export default function Home() {
         setTabActive('all');
         return true;
       }
-
     });
     scrollToTop();
     setFilteredGames(jogosFiltrados);
-
   };
 
   useEffect(() => {
@@ -110,40 +106,49 @@ export default function Home() {
   }, [filteredGames]);
 
   return (
-    <View style={styles.container}  >
+    <View style={styles.container}>
       <SafeAreaView />
 
-      {
-        isLoading ?
-          <LoadingArea />
-          :
-          <>
-            <Tabs tabActive={tabActive} handlelickTabs={handlelickTabs} />
+      {isLoading ? (
+        <LoadingArea />
+      ) : (
+        <>
+          <Tabs tabActive={tabActive} handlelickTabs={handlelickTabs} />
 
-            <View style={{ height: '100%', width: Dimensions.get("screen").width, paddingTop: 32, paddingHorizontal: 24 }}>
-              <FlashList
-                ListHeaderComponent={
-                  <Text style={styles.quantidade}>Mostrando {quantity} disponíveis</Text>
-                }
-                ref={listRef}
-                initialNumToRender={10}
-                keyExtractor={(item) => item.id}
-                data={filteredGames && filteredGames.length > 0 ? filteredGames : games}
-                estimatedItemSize={200}
-                refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
-                renderItem={({ item }) => <Card game={item} />}
-              />
-            </View>
-          </>
-
-
-      }
-
-
-
-
+          <View
+            style={{
+              height: '100%',
+              width: Dimensions.get('screen').width,
+              paddingTop: 32,
+              paddingHorizontal: 24,
+            }}
+          >
+            <FlashList
+              ListHeaderComponent={
+                <>
+                  <Text style={styles.quantidade}>
+                    Mostrando {quantity} disponíveis
+                  </Text>
+                  <Text>{erro}</Text>
+                </>
+              }
+              ref={listRef}
+              initialNumToRender={10}
+              keyExtractor={(item) => item.id}
+              data={
+                filteredGames && filteredGames.length > 0
+                  ? filteredGames
+                  : games
+              }
+              estimatedItemSize={200}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              renderItem={({ item }) => <Card game={item} navigation={navigation} />}
+            />
+          </View>
+        </>
+      )}
 
       <StatusBar style="light" />
     </View>
@@ -175,7 +180,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     width: '100%',
     paddingHorizontal: 24,
-
   },
   quantidade: {
     paddingBottom: 32,

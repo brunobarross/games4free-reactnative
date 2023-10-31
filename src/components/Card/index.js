@@ -1,32 +1,32 @@
-import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 import { Linking } from 'react-native';
 
-export default function Card({ game }) {
+export default function Card({ game, navigation }) {
   return (
     <View style={styles.card}>
       <Image style={styles.img} source={{ uri: game.thumbnail }} />
       <View style={styles.cardInfo}>
         <Text style={styles.title}>{game.title}</Text>
         <View style={styles.platformArea}>
-          <Text>
-            {game.type} |{" "}
-          </Text>
-          <Text style={
-            {
+          <Text>{game.type} | </Text>
+          <Text
+            style={{
               ...styles.badge,
               marginRight: 8,
-            }
-          }>
-            {game.platforms.split(",")[0]}
+            }}
+          >
+            {game.platforms.split(',')[0]}
           </Text>
-          {
-            game.platforms.split(",")[1] &&
-            <Text style={styles.badge}>
-              {game.platforms.split(",")[1]}
-            </Text>
-          }
-
-
+          {game.platforms.split(',')[1] && (
+            <Text style={styles.badge}>{game.platforms.split(',')[1]}</Text>
+          )}
         </View>
         <View style={styles.priceArea}>
           <Text style={styles.freeText}>Grátis</Text>
@@ -34,6 +34,17 @@ export default function Card({ game }) {
         </View>
         <Text style={styles.description} numberOfLines={2}>
           {game.description}
+        </Text>
+        <Text
+          style={{ color: 'rgba(39,70,144, 1)', marginTop: 16 }}
+          onPress={() => {
+            /* 1. Navigate to the Details route with params */
+            navigation.navigate('Game', {
+              itemId: game.id,
+            });
+          }}
+        >
+          Detalhes
         </Text>
         <TouchableOpacity
           style={styles.buttonGet}
@@ -117,5 +128,5 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
     fontSize: 12,
-  }
+  },
 });
