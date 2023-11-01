@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import LoadingArea from '../../components/LoadingArea';
@@ -35,6 +36,9 @@ export default function Game({ route, navigation }) {
       setGame(data);
     } catch (err) {
       console.log(err);
+      Alert.alert(
+        err.message,
+      )
     } finally {
       setIsLoading(false);
     }

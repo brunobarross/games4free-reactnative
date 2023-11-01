@@ -102,7 +102,6 @@ export default function Home({ navigation }) {
   };
 
   useEffect(() => {
-    console.log(Constants?.expoConfig?.extra)
     getGames();
   }, []);
 
