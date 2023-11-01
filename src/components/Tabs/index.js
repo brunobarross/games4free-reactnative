@@ -52,7 +52,7 @@ export default function Tabs({ tabActive, handlelickTabs }) {
                                 : 'rgba(0,0,0,1)',
                     }}
                 >
-                    DLC
+                    DLC's
                 </Text>
             </TouchableOpacity>
         </View>

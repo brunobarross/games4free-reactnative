@@ -38,7 +38,6 @@ export default function Card({ game, navigation }) {
         <Text
           style={{ color: 'rgba(39,70,144, 1)', marginTop: 16 }}
           onPress={() => {
-            /* 1. Navigate to the Details route with params */
             navigation.navigate('Game', {
               itemId: game.id,
             });

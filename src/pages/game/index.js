@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import LoadingArea from '../../components/LoadingArea';
 import Constants from 'expo-constants';
 import { Linking } from 'react-native';
+import axios from 'axios'
 
 export default function Game({ route, navigation }) {
   const { itemId } = route.params;
@@ -21,17 +22,16 @@ export default function Game({ route, navigation }) {
   const getGame = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch(
-        `https://gamerpower.p.rapidapi.com/api/giveaway?id=${itemId}`,
-        {
-          method: 'GET',
-          headers: {
-            'X-RapidAPI-Key': `${apiKey}`,
-            'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com',
-          },
-        },
-      );
-      const data = await res.json();
+      const options = {
+        method: 'GET',
+        url: `https://gamerpower.p.rapidapi.com/api/giveaway?id=${itemId}`,
+        headers: {
+          'X-RapidAPI-Key': apiKey,
+          'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com'
+        }
+      };
+      const res = await axios.request(options);
+      const data = res.data
       setGame(data);
     } catch (err) {
       console.log(err);
@@ -52,42 +52,47 @@ export default function Game({ route, navigation }) {
       {isLoading ? (
         <LoadingArea />
       ) : (
-        <ScrollView style={styles.scrollArea}>
-          <Image style={styles.img} source={{ uri: game?.thumbnail }} />
-          <View style={styles.cardInfo}>
-            <Text style={styles.title}>{game?.title}</Text>
-            <View style={styles.platformArea}>
-              <Text>{game?.type} | </Text>
-              <Text
-                style={{
-                  ...styles.badge,
-                  marginRight: 8,
-                }}
-              >
-                {game?.platforms.split(',')[0]}
-              </Text>
-              {game?.platforms.split(',')[1] && (
-                <Text style={styles.badge}>
-                  {game?.platforms.split(',')[1]}
+        <>
+
+          <ScrollView style={styles.scrollArea}>
+            <Image style={styles.img} source={{ uri: game?.thumbnail }} />
+            <View style={styles.cardInfo}>
+              <Text style={styles.title}>{game?.title}</Text>
+              <View style={styles.platformArea}>
+                <Text style={styles.type}>{game?.type} | </Text>
+                <Text
+                  style={{
+                    ...styles.badge,
+                    marginRight: 8,
+                  }}
+                >
+                  {game?.platforms.split(',')[0]}
                 </Text>
-              )}
+                {game?.platforms.split(',')[1] && (
+                  <Text style={styles.badge}>
+                    {game?.platforms.split(',')[1]}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.priceArea}>
+                <Text style={styles.freeText}>Grátis</Text>
+                <Text style={styles.price}>{game?.worth}</Text>
+              </View>
+              <Text style={styles.description}>{game?.description}</Text>
             </View>
-            <View style={styles.priceArea}>
-              <Text style={styles.freeText}>Grátis</Text>
-              <Text style={styles.price}>{game?.worth}</Text>
-            </View>
-            <Text style={styles.description}>{game?.description}</Text>
-          </View>
-          <View style={{ width: '100%', padding: 16 }}>
+
+          </ScrollView>
+          <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 }}>
             <TouchableOpacity
               style={styles.buttonGet}
-              onPress={() => Linking.openURL(game?.open_giveaway)}
+              onPress={() => Linking.openURL(game?.open_giveaway_url)}
             >
               <Text style={styles.buttonGetText}>Resgatar</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </>
       )}
+
     </View>
   );
 }
@@ -95,49 +100,57 @@ export default function Game({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,1)',
+    backgroundColor: 'rgba(31,31,31,1)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   scrollArea: {
     width: '100%',
     flex: 1,
+
   },
 
   img: {
     width: '100%',
-    height: 150,
+    height: 200,
     resizeMode: 'stretch',
   },
   cardInfo: {
     flex: 40,
-    padding: 16,
+    paddingHorizontal: 24,
+    paddingTop: 16,
   },
   title: {
-    color: 'rgba(10,10,10,1)',
+    color: 'white',
     fontWeight: 'bold',
     fontSize: 22,
   },
   description: {
     marginTop: 16,
     fontSize: 16,
+    color: 'white'
+  },
+  type: {
+    color: 'white',
   },
   priceArea: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
     fontSize: 14,
+
   },
   freeText: {
     color: ' rgb(39, 70, 144)',
     fontWeight: 'bold',
     fontSize: 16,
+    color: 'white'
   },
   price: {
-    color: 'rgba(0,0,0,1)',
     fontWeight: 'bold',
     textDecorationLine: 'line-through',
     marginLeft: 8,
+    color: '#818380'
   },
   buttonGet: {
     width: '100%',
@@ -145,7 +158,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(39,70,144,1)',
-    marginTop: 48,
     height: 48,
   },
   buttonGetText: {
@@ -159,6 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 16,
     fontSize: 16,
+    color: 'white'
   },
   badge: {
     backgroundColor: '#002c3f',

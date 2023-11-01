@@ -12,7 +12,7 @@ import Tabs from '../../components/Tabs/index.js';
 import LoadingArea from '../../components/LoadingArea/index.js';
 import { useEffect, useState, useRef } from 'react';
 import { FlashList } from '@shopify/flash-list';
-
+import axios from 'axios'
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 
@@ -27,28 +27,29 @@ export default function Home({ navigation }) {
   const listRef = useRef();
   const apiUrl = Constants?.expoConfig?.extra.apiUrl;
   const apiKey = Constants?.expoConfig?.extra.apiKey;
-  const [erro, setErro] = useState('');
-
   const getGames = async () => {
-    console.log(process.env)
+
     try {
       setIsLoading(true);
-      const res = await fetch(`${apiUrl}`, {
+      const options = {
         method: 'GET',
+        url: `${apiUrl}`,
         headers: {
-          'X-RapidAPI-Key': `${apiKey}`,
-          'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com',
-        },
-      });
-
-      const data = await res.json();
+          'X-RapidAPI-Key': apiKey,
+          'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com'
+        }
+      };
+      const res = await axios.request(options);
+      const data = res.data
       setGames(data);
       if (tabActive === 'all') {
         setQuantity(data.length);
       }
     } catch (err) {
       console.log(err);
-      setErro('Erro ao carregar os jogos', err);
+      Alert.alert(
+        err.message,
+      )
     } finally {
       setIsLoading(false);
     }
@@ -122,20 +123,15 @@ export default function Home({ navigation }) {
           <View
             style={{
               height: '100%',
-              width: Dimensions.get('screen').width,
+              width: '100%',
               paddingTop: 32,
               paddingHorizontal: 24,
             }}
           >
+            <Text style={styles.quantidade}>
+              Mostrando {quantity} disponíveis
+            </Text>
             <FlashList
-              ListHeaderComponent={
-                <>
-                  <Text style={styles.quantidade}>
-                    Mostrando {quantity} disponíveis
-                  </Text>
-                  <Text>{erro}</Text>
-                </>
-              }
               ref={listRef}
               initialNumToRender={10}
               keyExtractor={(item) => item.id}

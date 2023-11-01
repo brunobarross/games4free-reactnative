@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Linking } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 export default function About() {
 
     return (
@@ -7,7 +8,7 @@ export default function About() {
             <ScrollView style={styles.scrollArea}>
                 <Text style={{
                     ...styles.texto,
-                    fontSize: 17,
+                    fontSize: 18,
                     fontWeight: 'bold',
                     marginBottom: 16,
 
@@ -23,6 +24,18 @@ export default function About() {
                         Altamiro Bruno</Text>, um desenvolvedor com 3 anos de experiência em desenvolvimento de software e que ama jogos.
 
                 </Text>
+                <Text style={styles.texto}>
+                    Os dados consumidos aqui são fornecidos pela API <Text
+                        onPress={() => {
+                            Linking.openURL('https://www.gamerpower.com/api-read');
+                        }}
+                        style={{ fontWeight: 'bold', color: '#5276CD' }}
+                    >Gamepower</Text> da plataforma <Text
+                        onPress={() => {
+                            Linking.openURL('https://www.gamerpower.com');
+                        }}
+                        style={{ fontWeight: 'bold', color: '#5276CD' }}>gamepower.com</Text>.
+                </Text>
                 <Text style={styles.texto}>O <Text style={{ fontWeight: 'bold' }}>Games4Free</Text> é muito mais do que um aplicativo. É uma plataforma desenvolvida com a tecnologia React Native que traz uma experiência única para os verdadeiros entusiastas de jogos. Se você é alguém que adora descobrir novos títulos emocionantes e, ainda por cima, obtê-los sem gastar um centavo, você está no lugar certo.</Text>
                 <Text style={styles.texto}>Nosso objetivo é simplificar a busca por informações sobre jogos e DLCs gratuitos disponíveis em várias das plataformas de jogos mais populares do mundo, incluindo Steam, Epic Games Store, PlayStation Store e Microsoft Store. No <Text style={{ fontWeight: 'bold' }}>Games4Free</Text>, a caça ao tesouro nunca foi tão fácil. Reunimos todas as ofertas imperdíveis em um só lugar, economizando seu tempo e seu dinheiro.</Text>
                 <Text style={styles.texto}>
@@ -37,18 +50,39 @@ export default function About() {
                 <Text style={styles.texto}>
                     Estamos felizes por você estar aqui, e esperamos que o <Text style={{ fontWeight: 'bold' }}>Games4Free</Text> torne sua experiência de jogo ainda mais incrível. Seja bem-vindo à nossa comunidade e aproveite o mundo dos jogos gratuitos ao máximo!
                 </Text>
-                <Text style={styles.texto}>
-                    Os dados consumidos aqui são fornecidos pela API <Text
-                        onPress={() => {
-                            Linking.openURL('https://www.gamerpower.com/api-read');
-                        }}
-                        style={{ fontWeight: 'bold', color: '#5276CD' }}
-                    >Gamepower</Text> da plataforma <Text
-                        onPress={() => {
-                            Linking.openURL('https://www.gamerpower.com');
-                        }}
-                        style={{ fontWeight: 'bold', color: '#5276CD' }}>gamepower.com</Text>.
+                <Text style={{
+                    ...styles.texto,
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginTop: 32,
+                }}>
+                    Conheça mais sobre o desenvolvedor:
                 </Text>
+                <View style={styles.buttonsArea}>
+                    <TouchableOpacity style={styles.buttonNetwork} onPress={() => {
+                        Linking.openURL('https://github.com/brunobarross');
+                    }
+                    }>
+                        <Ionicons name="logo-github" size={24} color="white" />
+
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonNetwork} onPress={() => {
+                        Linking.openURL('https://www.linkedin.com/in/altamirobruno/');
+                    }
+                    }>
+                        <Ionicons name="logo-linkedin" size={24} color="white" />
+
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonNetwork} onPress={() => {
+                        Linking.openURL('https://altabru.com.br/');
+                    }
+                    }>
+                        <Ionicons name="globe-outline" size={24} color="white" />
+
+                    </TouchableOpacity>
+                </View>
+
+
 
             </ScrollView>
 
@@ -80,6 +114,23 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 14,
         lineHeight: 24,
+
+    },
+    buttonsArea: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16,
+        marginTop: 24
+    },
+    buttonNetwork: {
+        width: 48,
+        height: 48,
+        borderRadius: 4,
+        backgroundColor: '#5276CD',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 
 });
+
+

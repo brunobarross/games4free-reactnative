@@ -4,24 +4,33 @@ import 'dotenv/config'
 
 export default {
   expo: {
-    name: "my-app",
-    slug: "my-app",
+    name: "Games4free",
+    slug: "games4free_mobile",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     splash: {
       image: "./assets/splash.png",
-      resizeMode: "cover",
-      backgroundColor: "#ffffff"
+      resizeMode: "cover"
     },
+    plugins: [
+      [
+        'expo-build-properties',
+        {
+          android: {
+            usesCleartextTraffic: true
+          },
+        },
+      ],
+    ],
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
       },
       package: "com.altamiro.myapp"
