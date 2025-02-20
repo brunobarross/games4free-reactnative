@@ -33,14 +33,14 @@ export default {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
       },
-      package: "com.altamiro.myapp"
+      package: "com.altamiro.games4free_mobile"
     },
     web: {
       favicon: "./assets/favicon.png"
     },
     extra: {
       eas: {
-        projectId: "28a9e02d-152e-40c3-864f-4df49d23a9cc"
+        projectId: "cc86165d-b831-467e-ad49-1f5f66f20502"
       },
       apiUrl: process.env.API_URL,
       apiKey: process.env.API_KEY
@@ -50,6 +50,7 @@ export default {
     },
     updates: {
       url: "https://u.expo.dev/28a9e02d-152e-40c3-864f-4df49d23a9cc"
-    }
+    },
+    owner: "altamiro"
   }
 };
