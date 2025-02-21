@@ -14,9 +14,7 @@ export default {
       image: "./assets/splash.png",
       resizeMode: "cover"
     },
-    android:{
-      "targetSdkVersion": 34
-    },
+    
     plugins: [
       [
         'expo-build-properties',
@@ -37,7 +35,8 @@ export default {
         backgroundColor: "#ffffff"
       },
       targetSdkVersion: 34,
-      package: "com.altamiro.games4free_mobile"
+      package: "com.altamiro.games4free_mobile",
+      versionCode:2
     },
     web: {
       favicon: "./assets/favicon.png"
